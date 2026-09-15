@@ -1,0 +1,197 @@
+/* =========================================================
+   STREAMX — GLOBAL DESIGN SYSTEM
+   ========================================================= */
+
+:root {
+    --bg-primary: #08090d;
+    --bg-secondary: #0d0f14;
+    --bg-card: #13161d;
+    --bg-card-hover: #191d26;
+
+    --text-primary: #ffffff;
+    --text-secondary: #a7abb6;
+    --text-muted: #6f7480;
+
+    --accent: #e50914;
+    --accent-hover: #f51b26;
+
+    --border: rgba(255, 255, 255, 0.08);
+
+    --container-width: 1440px;
+
+    --radius-small: 6px;
+    --radius-medium: 10px;
+    --radius-large: 16px;
+
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   DEFAULT ELEMENTS
+   ========================================================= */
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #292d36;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #3b404c;
+}
+
+
+/* =========================================================
+   APP
+   ========================================================= */
+
+#app {
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+main {
+    width: 100%;
+}
+
+.content-section {
+    width: min(
+        calc(100% - 80px),
+        var(--container-width)
+    );
+
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    min-height: 48px;
+    padding: 0 22px;
+
+    border-radius: var(--radius-small);
+
+    font-weight: 700;
+    font-size: 14px;
+
+    transition:
+        transform var(--transition-fast),
+        background var(--transition-fast);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: var(--text-primary);
+    color: #08090d;
+}
+
+.btn-primary:hover {
+    background: #e7e7e7;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text-primary);
+
+    backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+
+.hidden {
+    display: none !important;
+}
+
+.no-scroll {
+    overflow: hidden;
+}

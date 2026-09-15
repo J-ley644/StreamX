@@ -1,0 +1,265 @@
+/* =========================================================
+   STREAMX — RESPONSIVE DESIGN
+   ========================================================= */
+
+
+/* =========================================================
+   LARGE TABLETS / SMALL DESKTOP
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .movie-row {
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr));
+    }
+
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .navbar {
+        padding: 0 25px;
+    }
+
+    .navbar-left {
+        gap: 25px;
+    }
+
+    .nav-links {
+        gap: 18px;
+    }
+
+    .download-link,
+    .profile-name {
+        display: none;
+    }
+
+    .hero {
+        min-height: 650px;
+    }
+
+    .hero-content {
+        width: calc(100% - 50px);
+    }
+
+    .content-section {
+        width: calc(100% - 50px);
+    }
+
+    .movie-row {
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .navbar {
+        height: 64px;
+
+        padding: 0 18px;
+
+        background:
+            rgba(8, 9, 13, 0.95);
+    }
+
+    .navbar-left {
+        gap: 12px;
+    }
+
+    .mobile-menu-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .logo {
+        font-size: 19px;
+    }
+
+    .nav-links {
+        position: fixed;
+
+        top: 64px;
+        left: 0;
+
+        width: 100%;
+
+        padding: 25px 20px;
+
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+
+        gap: 20px;
+
+        background: rgba(13, 15, 20, 0.98);
+
+        border-bottom: 1px solid var(--border);
+    }
+
+    .mobile-menu-open .nav-links {
+        display: flex;
+    }
+
+    .nav-links a.active::after {
+        display: none;
+    }
+
+    .navbar-right {
+        gap: 5px;
+    }
+
+    .profile-avatar {
+        width: 31px;
+        height: 31px;
+    }
+
+
+    /* HERO */
+
+    .hero {
+        min-height: 650px;
+
+        align-items: flex-end;
+
+        background-position:
+            65% center;
+    }
+
+    .hero-content {
+        width: calc(100% - 36px);
+
+        padding-top: 130px;
+        padding-bottom: 55px;
+    }
+
+    .hero h1 {
+        max-width: 100%;
+
+        font-size: 45px;
+
+        letter-spacing: -2px;
+    }
+
+    .hero-description {
+        max-width: 100%;
+
+        font-size: 14px;
+
+        line-height: 1.6;
+    }
+
+    .hero-meta {
+        gap: 9px;
+
+        font-size: 12px;
+    }
+
+    .hero-meta span:not(:last-child)::after {
+        margin-left: 9px;
+    }
+
+    .hero-actions {
+        width: 100%;
+    }
+
+    .hero-actions .btn {
+        flex: 1;
+    }
+
+
+    /* CONTENT */
+
+    .content-section {
+        width: calc(100% - 36px);
+
+        margin-top: 38px;
+    }
+
+    .section-header h2 {
+        font-size: 18px;
+    }
+
+    .movie-row {
+        display: flex;
+
+        overflow-x: auto;
+
+        gap: 12px;
+
+        padding-bottom: 5px;
+
+        scroll-snap-type: x mandatory;
+
+        scrollbar-width: none;
+    }
+
+    .movie-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .movie-card {
+        flex: 0 0 145px;
+
+        scroll-snap-align: start;
+    }
+
+    .movie-info h3 {
+        font-size: 13px;
+    }
+
+
+    /* FOOTER */
+
+    .footer {
+        margin-top: 70px;
+
+        padding:
+            45px 20px 30px;
+    }
+
+    .footer-links {
+        flex-wrap: wrap;
+
+        gap: 15px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .hero h1 {
+        font-size: 38px;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+    }
+
+    .hero-actions .btn {
+        width: 100%;
+    }
+
+    .movie-card {
+        flex-basis: 135px;
+    }
+
+}

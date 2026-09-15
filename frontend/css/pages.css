@@ -1,0 +1,424 @@
+/* =========================================================
+   STREAMX — INNER PAGES
+   ========================================================= */
+
+
+/* =========================================================
+   PAGE CONTAINER
+   ========================================================= */
+
+.page-container {
+    width: min(
+        calc(100% - 80px),
+        var(--container-width)
+    );
+
+    margin: 0 auto;
+
+    padding-top: 120px;
+    min-height: 80vh;
+}
+
+.page-heading {
+    margin-bottom: 45px;
+}
+
+.page-heading h1 {
+    margin: 12px 0;
+
+    font-size: clamp(38px, 5vw, 58px);
+
+    letter-spacing: -2px;
+}
+
+.page-heading p {
+    max-width: 550px;
+
+    color: var(--text-secondary);
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   MOVIE DETAILS
+   ========================================================= */
+
+.movie-details {
+    min-height: 760px;
+
+    display: flex;
+    align-items: center;
+
+    background-size: cover;
+    background-position: center;
+
+    margin-top: 0;
+}
+
+.details-container {
+    width: min(
+        calc(100% - 80px),
+        var(--container-width)
+    );
+
+    margin: 0 auto;
+
+    padding-top: 80px;
+
+    display: grid;
+
+    grid-template-columns:
+        300px minmax(0, 650px);
+
+    gap: 55px;
+
+    align-items: center;
+}
+
+.details-poster {
+    overflow: hidden;
+
+    border-radius: var(--radius-large);
+
+    box-shadow:
+        0 30px 70px rgba(0, 0, 0, 0.5);
+}
+
+.details-poster img {
+    width: 100%;
+
+    aspect-ratio: 2 / 3;
+
+    object-fit: cover;
+}
+
+.details-content h1 {
+    margin: 12px 0 18px;
+
+    font-size: clamp(42px, 5vw, 68px);
+
+    line-height: 1;
+
+    letter-spacing: -2.5px;
+}
+
+.details-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 25px;
+
+    color: var(--text-secondary);
+
+    font-size: 14px;
+}
+
+.details-meta .rating {
+    color: #f5c451;
+
+    font-weight: 700;
+}
+
+.details-description {
+    max-width: 600px;
+
+    margin-bottom: 25px;
+
+    color: var(--text-secondary);
+
+    font-size: 16px;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   GENRES
+   ========================================================= */
+
+.genre-list {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-bottom: 30px;
+}
+
+.genre-list span {
+    padding: 7px 12px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 50px;
+
+    color: var(--text-secondary);
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   DETAILS ACTIONS
+   ========================================================= */
+
+.details-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 10px;
+}
+
+.download-button {
+    min-height: 48px;
+
+    padding: 0 20px;
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-small);
+
+    background: rgba(255,255,255,.06);
+
+    color: var(--text-primary);
+
+    font-weight: 600;
+
+    transition:
+        background var(--transition-fast);
+}
+
+.download-button:hover {
+    background: rgba(255,255,255,.12);
+}
+
+
+/* =========================================================
+   WATCH PAGE
+   ========================================================= */
+
+.watch-page {
+    width: min(
+        calc(100% - 80px),
+        1300px
+    );
+
+    margin: 0 auto;
+
+    padding-top: 105px;
+}
+
+.video-container {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 9;
+
+    overflow: hidden;
+
+    border-radius: var(--radius-large);
+
+    background: #000;
+
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.4);
+}
+
+.video-container video {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    background: #000;
+}
+
+.player-placeholder {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 20px;
+
+    background:
+        linear-gradient(
+            rgba(0,0,0,.35),
+            rgba(0,0,0,.65)
+        );
+
+    pointer-events: none;
+}
+
+.player-placeholder p {
+    color: rgba(255,255,255,.7);
+
+    font-size: 13px;
+}
+
+.player-play {
+    width: 72px;
+    height: 72px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.95);
+
+    color: #08090d;
+
+    font-size: 23px;
+}
+
+.watch-info {
+    padding: 28px 0 70px;
+}
+
+.watch-info h1 {
+    margin-bottom: 15px;
+
+    font-size: 32px;
+
+    letter-spacing: -1px;
+}
+
+.watch-info > p {
+    max-width: 700px;
+
+    color: var(--text-secondary);
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   EMPTY STATES
+   ========================================================= */
+
+.empty-state,
+.download-empty {
+    min-height: 350px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-large);
+
+    background: rgba(255,255,255,.02);
+
+    padding: 40px;
+}
+
+.empty-icon,
+.download-empty-icon {
+    width: 70px;
+    height: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 20px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.07);
+
+    color: var(--text-secondary);
+
+    font-size: 30px;
+}
+
+.empty-state h2,
+.download-empty h2 {
+    margin-bottom: 10px;
+}
+
+.empty-state p,
+.download-empty p {
+    max-width: 420px;
+
+    margin-bottom: 25px;
+
+    color: var(--text-secondary);
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.search-container {
+    width: min(
+        calc(100% - 80px),
+        var(--container-width)
+    );
+
+    margin: 0 auto;
+
+    padding-top: 115px;
+}
+
+.search-box {
+    position: relative;
+
+    margin-bottom: 50px;
+}
+
+.search-box input {
+    width: 100%;
+
+    height: 62px;
+
+    padding: 0 22px 0 55px;
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-medium);
+
+    outline: none;
+
+    background: var(--bg-card);
+
+    color: var(--text-primary);
+
+    font-size: 16px;
+
+    transition:
+        border var(--transition-fast);
+}
+
+.search-box input:focus {
+    border-color:
+        rgba(255,255,255,.25);
+}
+
+.search-box span {
+    position: absolute;
+
+    left: 20px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: var(--text-secondary);
+
+    font-size: 25px;
+}
