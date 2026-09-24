@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Verify Email — StreamX</title>
+
+    <link
+        rel="stylesheet"
+        href="css/main.css"
+    >
+
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .verification-page {
+            width: 100%;
+            max-width: 520px;
+            text-align: center;
+        }
+
+        .verification-card {
+            padding: 48px 32px;
+            border-radius: 20px;
+            background: rgba(20, 20, 20, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.45);
+        }
+
+        .verification-logo {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 32px;
+        }
+
+        .verification-logo span {
+            color: #e50914;
+        }
+
+        .verification-icon {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            background: rgba(229, 9, 20, 0.12);
+            color: #e50914;
+        }
+
+        .verification-card h1 {
+            margin-bottom: 12px;
+            font-size: 30px;
+        }
+
+        .verification-card p {
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .verification-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 0 24px;
+            border-radius: 8px;
+            background: #e50914;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            transition: opacity 0.2s ease;
+        }
+
+        .verification-button:hover {
+            opacity: 0.88;
+        }
+
+        .verification-status {
+            min-height: 24px;
+            color: #aaa;
+            margin-bottom: 24px;
+        }
+
+        .verification-card.success
+        .verification-icon {
+            background: rgba(34, 197, 94, 0.12);
+            color: #22c55e;
+        }
+
+        .verification-card.success
+        .verification-button {
+            background: #22c55e;
+        }
+
+        .verification-card.error
+        .verification-icon {
+            background: rgba(239, 68, 68, 0.12);
+            color: #ef4444;
+        }
+
+        .verification-card.error
+        .verification-button {
+            background: #ef4444;
+        }
+
+        @media (max-width: 600px) {
+            .verification-card {
+                padding: 40px 22px;
+            }
+
+            .verification-card h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="verification-page">
+
+        <section
+            id="verificationCard"
+            class="verification-card"
+        >
+
+            <div class="verification-logo">
+                STREAM<span>X</span>
+            </div>
+
+            <div
+                id="verificationIcon"
+                class="verification-icon"
+            >
+                ?
+            </div>
+
+            <h1 id="verificationTitle">
+                Verifying your email...
+            </h1>
+
+            <p id="verificationMessage">
+                Please wait while we activate your
+                StreamX account.
+            </p>
+
+            <div
+                id="verificationStatus"
+                class="verification-status"
+            >
+                Connecting to StreamX...
+            </div>
+
+            <a
+                id="verificationButton"
+                class="verification-button"
+                href="index.html"
+                style="display:none"
+            >
+                Continue to StreamX
+            </a>
+
+        </section>
+
+    </main>
+
+    <script src="js/verify-email.js"></script>
+
+</body>
+</html>

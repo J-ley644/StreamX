@@ -4,12 +4,22 @@ const moviesRoutes = require(
     "../modules/movies/movies.routes"
 );
 
-const router = express.Router();
-
 const genresRoutes = require(
     "../modules/genres/genres.routes"
 );
 
+const mediaRoutes = require(
+    "../modules/media/media.routes"
+);
+
+const authRoutes = require(
+    "../modules/auth/auth.routes"
+);
+const userActivityRoutes = require(
+    "../modules/users/userActivity.routes"
+);
+
+const router = express.Router();
 
 router.get("/health", (req, res) => {
     res.json({
@@ -19,10 +29,14 @@ router.get("/health", (req, res) => {
     });
 });
 
-
 router.use("/movies", moviesRoutes);
 
 router.use("/genres", genresRoutes);
 
+router.use("/", mediaRoutes);
+
+router.use("/auth", authRoutes);
+
+router.use("/users", userActivityRoutes);
 
 module.exports = router;
