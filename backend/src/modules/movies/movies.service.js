@@ -189,10 +189,61 @@ async function deleteMovie(id) {
     return result.rows[0] || null;
 }
 
+async function getMovieGenres(movieId) {
+    const result = await pool.query(
+        `
+        SELECT
+            g.id,
+            g.name
+        FROM movie_genres mg
+        INNER JOIN genres g
+            ON g.id = mg.genre_id
+        WHERE mg.movie_id = $1
+        ORDER BY g.name ASC;
+        `,
+        [movieId]
+    );
+
+    return result.rows;
+}
+
+async function addMovieGenre(movieId, genreId) {
+    const result = await pool.query(
+        `
+        INSERT INTO movie_genres (movie_id, genre_id)
+        VALUES ($1, $2)
+        ON CONFLICT (movie_id, genre_id)
+        DO NOTHING
+        RETURNING movie_id, genre_id;
+        `,
+        [movieId, genreId]
+    );
+
+    return result.rows[0] || null;
+}
+
+async function removeMovieGenre(movieId, genreId) {
+    const result = await pool.query(
+        `
+        DELETE FROM movie_genres
+        WHERE movie_id = $1
+        AND genre_id = $2
+        RETURNING movie_id, genre_id;
+        `,
+        [movieId, genreId]
+    );
+
+    return result.rows[0] || null;
+}
+
 
 module.exports = {
     getMovies,
     getMovieById,
     createMovie,
-    deleteMovie
+    deleteMovie,
+    getMovieGenres,
+    addMovieGenre,
+    removeMovieGenre
 };
+

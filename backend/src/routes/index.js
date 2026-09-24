@@ -6,6 +6,10 @@ const moviesRoutes = require(
 
 const router = express.Router();
 
+const genresRoutes = require(
+    "../modules/genres/genres.routes"
+);
+
 
 router.get("/health", (req, res) => {
     res.json({
@@ -17,6 +21,8 @@ router.get("/health", (req, res) => {
 
 
 router.use("/movies", moviesRoutes);
+
+router.use("/genres", genresRoutes);
 
 
 module.exports = router;
