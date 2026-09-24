@@ -1,6 +1,11 @@
 const express = require("express");
 
+const moviesRoutes = require(
+    "../modules/movies/movies.routes"
+);
+
 const router = express.Router();
+
 
 router.get("/health", (req, res) => {
     res.json({
@@ -9,5 +14,9 @@ router.get("/health", (req, res) => {
         status: "online"
     });
 });
+
+
+router.use("/movies", moviesRoutes);
+
 
 module.exports = router;
