@@ -1,4 +1,5 @@
 const { Pool } = require("pg");
+
 const config = require("../config/env");
 
 if (!config.databaseUrl) {
@@ -12,10 +13,19 @@ const databaseUrl = new URL(
 );
 
 const pool = new Pool({
-    host: databaseUrl.hostname,
-    port: Number(databaseUrl.port || 5432),
-    user: decodeURIComponent(databaseUrl.username),
-    password: decodeURIComponent(databaseUrl.password),
+    // Neon pooler IPv4 address
+    host: "3.10.149.215",
+
+    port: 5432,
+
+    user: decodeURIComponent(
+        databaseUrl.username
+    ),
+
+    password: decodeURIComponent(
+        databaseUrl.password
+    ),
+
     database:
         databaseUrl.pathname.replace(
             /^\//,
@@ -24,7 +34,21 @@ const pool = new Pool({
 
     family: 4,
 
-    connectionTimeoutMillis: 15000,
+    max: 10,
+
+    min: 0,
+
+    idleTimeoutMillis: 10000,
+
+    connectionTimeoutMillis: 30000,
+
+    keepAlive: true,
+
+    keepAliveInitialDelayMillis: 10000,
+
+    // Tell Neon which endpoint this IP belongs to.
+    options:
+        "endpoint=ep-late-hat-za0c9rcz",
 
     ssl: {
         rejectUnauthorized: false

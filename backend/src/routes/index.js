@@ -19,6 +19,10 @@ const userActivityRoutes = require(
     "../modules/users/userActivity.routes"
 );
 
+const playbackRoutes = require(
+    "../modules/playback/playback.routes"
+);
+
 const router = express.Router();
 
 router.get("/health", (req, res) => {
@@ -38,5 +42,7 @@ router.use("/", mediaRoutes);
 router.use("/auth", authRoutes);
 
 router.use("/users", userActivityRoutes);
+
+router.use("/playback", playbackRoutes);
 
 module.exports = router;
