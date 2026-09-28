@@ -4,3 +4,5 @@ node_modules/
 
 backend/.env
 frontend/node_modules/
+backend/uploads/
+test-video.mp4
