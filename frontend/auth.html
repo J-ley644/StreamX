@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<meta
+    name="description"
+    content="StreamX — Your movies. Your world."
+>
+
+<title>StreamX — Welcome</title>
+
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/auth.css">
+
+
+</head>
+
+<body>
+
+
+<main class="auth-page">
+
+    <!-- Background -->
+    <div class="auth-background"></div>
+    <div class="auth-overlay"></div>
+
+    <!-- Header -->
+    <header class="auth-header">
+        <a href="index.html" class="auth-logo">
+            STREAM<span>X</span>
+        </a>
+
+        <a href="index.html" class="back-home">
+            ← Home
+        </a>
+    </header>
+
+
+    <!-- Landing -->
+    <section
+        id="landingView"
+        class="auth-view landing-view"
+    >
+
+        <div class="landing-content">
+
+            <div class="landing-badge">
+                STREAMX
+            </div>
+
+            <h1>
+                Your movies.<br>
+                <span>Your world.</span>
+            </h1>
+
+            <p class="landing-description">
+                Discover movies, keep track of what you're
+                watching, build your personal watchlist,
+                and continue watching whenever you return.
+            </p>
+
+            <div class="feature-list">
+
+                <div class="feature-item">
+                    <div class="feature-icon">▶</div>
+                    <div>
+                        <strong>Watch Movies</strong>
+                        <span>Enjoy your favorite movies in one place.</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">+</div>
+                    <div>
+                        <strong>Your Watchlist</strong>
+                        <span>Save movies you want to watch later.</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">↻</div>
+                    <div>
+                        <strong>Continue Watching</strong>
+                        <span>Pick up where you left off.</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="landing-actions">
+                <button
+                    type="button"
+                    id="showRegisterButton"
+                    class="auth-button primary"
+                >
+                    Create Account
+                </button>
+
+                <button
+                    type="button"
+                    id="showLoginButton"
+                    class="auth-button secondary"
+                >
+                    Sign In
+                </button>
+            </div>
+
+            <p class="landing-note">
+                Join StreamX and make your entertainment yours.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- Register -->
+    <section
+        id="registerView"
+        class="auth-view form-view hidden"
+    >
+
+        <div class="auth-card">
+
+            <button
+                type="button"
+                class="back-button"
+                data-show-landing
+            >
+                ← Back
+            </button>
+
+            <div class="form-logo">
+                STREAM<span>X</span>
+            </div>
+
+            <h2>Create your account</h2>
+
+            <p class="form-intro">
+                Join StreamX and start building your
+                personal movie experience.
+            </p>
+
+            <div
+                id="registerMessage"
+                class="form-message"
+            ></div>
+
+            <form id="registerForm">
+
+                <label for="registerDisplayName">
+                    Display Name
+                </label>
+
+                <input
+                    type="text"
+                    id="registerDisplayName"
+                    name="displayName"
+                    placeholder="Your name"
+                    autocomplete="name"
+                    minlength="2"
+                    required
+                >
+
+                <label for="registerEmail">
+                    Email Address
+                </label>
+
+                <input
+                    type="email"
+                    id="registerEmail"
+                    name="email"
+                    placeholder="you@example.com"
+                    autocomplete="email"
+                    required
+                >
+
+                <label for="registerPassword">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="registerPassword"
+                    name="password"
+                    placeholder="At least 8 characters"
+                    autocomplete="new-password"
+                    minlength="8"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    id="registerSubmit"
+                    class="auth-button primary full-width"
+                >
+                    Create Account
+                </button>
+
+            </form>
+
+            <p class="switch-form">
+                Already have an account?
+                <button
+                    type="button"
+                    id="switchToLogin"
+                >
+                    Sign in
+                </button>
+            </p>
+
+            <p class="verification-hint">
+                A verification link will be sent to your
+                real email address after registration.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- Login -->
+    <section
+        id="loginView"
+        class="auth-view form-view hidden"
+    >
+
+        <div class="auth-card">
+
+            <button
+                type="button"
+                class="back-button"
+                data-show-landing
+            >
+                ← Back
+            </button>
+
+            <div class="form-logo">
+                STREAM<span>X</span>
+            </div>
+
+            <h2>Welcome back</h2>
+
+            <p class="form-intro">
+                Sign in to continue watching your movies
+                and access your StreamX account.
+            </p>
+
+            <div
+                id="loginMessage"
+                class="form-message"
+            ></div>
+
+            <form id="loginForm">
+
+                <label for="loginEmail">
+                    Email Address
+                </label>
+
+                <input
+                    type="email"
+                    id="loginEmail"
+                    name="email"
+                    placeholder="you@example.com"
+                    autocomplete="email"
+                    required
+                >
+
+                <label for="loginPassword">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="loginPassword"
+                    name="password"
+                    placeholder="Your password"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    id="loginSubmit"
+                    class="auth-button primary full-width"
+                >
+                    Sign In
+                </button>
+
+            </form>
+
+            <div
+                id="resendVerification"
+                class="resend-verification hidden"
+            >
+                <p>
+                    Your email hasn't been verified yet.
+                </p>
+
+                <button
+                    type="button"
+                    id="resendVerificationButton"
+                >
+                    Resend verification email
+                </button>
+            </div>
+
+            <p class="switch-form">
+                Don't have an account?
+                <button
+                    type="button"
+                    id="switchToRegister"
+                >
+                    Create one
+                </button>
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="auth-footer">
+        <span>© StreamX</span>
+        <span>•</span>
+        <span>Your entertainment, your way.</span>
+    </footer>
+
+</main>
+
+<script src="js/auth.js"></script>
+
+
+</body>
+</html>

@@ -4,7 +4,7 @@
 
 document.addEventListener(
     "DOMContentLoaded",
-    () => {
+    async () => {
 
         /* -------------------------------------------------
            GLOBAL NAVIGATION
@@ -13,7 +13,9 @@ document.addEventListener(
         const navbar =
             document.getElementById("navbar");
 
+
         if (navbar) {
+
             navbar.innerHTML =
                 Navbar();
         }
@@ -26,9 +28,33 @@ document.addEventListener(
         const footer =
             document.getElementById("footer");
 
+
         if (footer) {
+
             footer.innerHTML =
                 Footer();
+        }
+
+
+        /* -------------------------------------------------
+           LOAD MOVIE CATALOGUE
+           ------------------------------------------------- */
+
+        try {
+
+            await loadMovies();
+
+        } catch (error) {
+
+            console.error(
+                "StreamX movie catalogue error:",
+                error
+            );
+
+
+            renderCatalogueError();
+
+            return;
         }
 
 
@@ -39,11 +65,23 @@ document.addEventListener(
         const hero =
             document.getElementById("hero");
 
+
         if (hero) {
 
-            hero.innerHTML =
-                HeroBanner(featuredMovie);
+            if (featuredMovie) {
 
+                hero.innerHTML =
+                    HeroBanner(
+                        featuredMovie
+                    );
+
+            } else {
+
+                hero.innerHTML =
+                    renderEmptyCatalogue(
+                        "No movies available"
+                    );
+            }
         }
 
 
@@ -52,22 +90,33 @@ document.addEventListener(
                 "continue-watching"
             );
 
+
         if (continueSection) {
 
             const continueMovies =
                 continueWatching.map(
-                    item => item.movie
+                    item =>
+                        item.movie
                 );
 
-            continueSection.innerHTML =
-                MovieRow(
-                    "Continue Watching",
-                    continueMovies,
-                    {
-                        continueWatching: true
-                    }
-                );
 
+            if (continueMovies.length) {
+
+                continueSection.innerHTML =
+                    MovieRow(
+                        "Continue Watching",
+                        continueMovies,
+                        {
+                            continueWatching:
+                                true
+                        }
+                    );
+
+            } else {
+
+                continueSection.innerHTML =
+                    "";
+            }
         }
 
 
@@ -76,6 +125,7 @@ document.addEventListener(
                 "popular-movies"
             );
 
+
         if (popularSection) {
 
             popularSection.innerHTML =
@@ -83,7 +133,6 @@ document.addEventListener(
                     "Popular Movies",
                     movies
                 );
-
         }
 
 
@@ -92,20 +141,14 @@ document.addEventListener(
                 "trending"
             );
 
+
         if (trendingSection) {
 
             trendingSection.innerHTML =
                 MovieRow(
                     "Trending Now",
-                    [
-                        movies[3],
-                        movies[1],
-                        movies[5],
-                        movies[0],
-                        movies[4]
-                    ]
+                    movies
                 );
-
         }
 
 
@@ -114,20 +157,14 @@ document.addEventListener(
                 "new-releases"
             );
 
+
         if (newReleasesSection) {
 
             newReleasesSection.innerHTML =
                 MovieRow(
                     "New Releases",
-                    [
-                        movies[0],
-                        movies[1],
-                        movies[4],
-                        movies[2],
-                        movies[3]
-                    ]
+                    movies
                 );
-
         }
 
 
@@ -139,6 +176,7 @@ document.addEventListener(
             typeof setupNavigation ===
             "function"
         ) {
+
             setupNavigation();
         }
 
@@ -152,16 +190,30 @@ document.addEventListener(
                 "movie-details"
             );
 
+
         if (details) {
 
             const movie =
                 getMovieFromURL();
 
-            details.innerHTML =
-                MovieDetails(movie);
 
-            setupMovieDetails(movie);
+            if (!movie) {
 
+                details.innerHTML =
+                    renderEmptyCatalogue(
+                        "Movie not found"
+                    );
+
+            } else {
+
+                details.innerHTML =
+                    MovieDetails(movie);
+
+
+                setupMovieDetails(
+                    movie
+                );
+            }
         }
 
 
@@ -174,16 +226,12 @@ document.addEventListener(
                 "watch-content"
             );
 
+
         if (watchContent) {
 
-            const movie =
-                getMovieFromURL();
-
-            watchContent.innerHTML =
-                WatchPlayer(movie);
-
-            setupVideoPlayer(movie);
-
+            loadWatchPage(
+                watchContent
+            );
         }
 
 
@@ -196,13 +244,14 @@ document.addEventListener(
                 "my-list-content"
             );
 
+
         if (myList) {
 
             myList.innerHTML =
                 MyListPage();
 
-            setupNavigation();
 
+            setupNavigation();
         }
 
 
@@ -215,17 +264,92 @@ document.addEventListener(
                 "downloads-content"
             );
 
+
         if (downloads) {
 
             downloads.innerHTML =
                 DownloadsPage();
 
-            setupNavigation();
 
+            setupNavigation();
         }
 
     }
 );
+
+
+/* =========================================================
+   CATALOGUE ERROR
+   ========================================================= */
+
+function renderCatalogueError() {
+
+    const containers = [
+
+        document.getElementById("hero"),
+
+        document.getElementById(
+            "popular-movies"
+        ),
+
+        document.getElementById(
+            "trending"
+        ),
+
+        document.getElementById(
+            "new-releases"
+        ),
+
+        document.getElementById(
+            "continue-watching"
+        ),
+
+        document.getElementById(
+            "movie-details"
+        )
+    ];
+
+
+    containers
+        .filter(Boolean)
+        .forEach(
+            container => {
+
+                container.innerHTML =
+                    renderEmptyCatalogue(
+                        "Unable to load StreamX catalogue"
+                    );
+            }
+        );
+}
+
+
+/* =========================================================
+   EMPTY CATALOGUE
+   ========================================================= */
+
+function renderEmptyCatalogue(
+    title
+) {
+
+    return `
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                ◯
+            </div>
+
+            <h2>
+                ${title}
+            </h2>
+
+            <p>
+                Please try again later.
+            </p>
+
+        </div>
+    `;
+}
 
 
 /* =========================================================
@@ -247,16 +371,17 @@ function setupMovieDetails(movie) {
             () => {
 
                 const saved =
-                    toggleMyList(movie.id);
+                    toggleMyList(
+                        movie.id
+                    );
+
 
                 listButton.textContent =
                     saved
                         ? "✓ In My List"
-                        : "＋ My List";
-
+                        : "+ My List";
             }
         );
-
     }
 
 
@@ -273,18 +398,164 @@ function setupMovieDetails(movie) {
             () => {
 
                 const downloaded =
-                    toggleDownload(movie.id);
+                    toggleDownload(
+                        movie.id
+                    );
+
 
                 downloadButton.textContent =
                     downloaded
                         ? "✓ Downloaded"
                         : "↓ Download";
-
             }
         );
-
     }
 
+}
+
+
+/* =========================================================
+   WATCH PAGE LOADER
+   ========================================================= */
+
+async function loadWatchPage(
+    container
+) {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const movieId =
+        params.get("id");
+
+
+    if (!movieId) {
+
+        container.innerHTML =
+            `
+                <div class="empty-state">
+
+                    <h2>
+                        Movie not found
+                    </h2>
+
+                    <p>
+                        No movie ID was provided.
+                    </p>
+
+                </div>
+            `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        `
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    ▶
+                </div>
+
+                <h2>
+                    Loading movie...
+                </h2>
+
+                <p>
+                    Preparing your secure
+                    playback session.
+                </p>
+
+            </div>
+        `;
+
+
+    try {
+
+        const playbackData =
+            await getPlaybackData(
+                movieId
+            );
+
+
+        container.innerHTML =
+            WatchPlayer(
+                playbackData.movie,
+                playbackData
+            );
+
+
+        setupVideoPlayer(
+            playbackData.movie,
+            playbackData.progress
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Watch page error:",
+            error
+        );
+
+
+        if (
+            error.code ===
+                "AUTH_REQUIRED" ||
+            error.code ===
+                "AUTH_EXPIRED"
+        ) {
+
+            container.innerHTML =
+                `
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+                            🔒
+                        </div>
+
+                        <h2>
+                            Sign in to watch
+                        </h2>
+
+                        <p>
+                            Your StreamX account is
+                            required to access
+                            secure playback.
+                        </p>
+
+                    </div>
+                `;
+
+            return;
+        }
+
+
+        container.innerHTML =
+            `
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        ⚠
+                    </div>
+
+                    <h2>
+                        Unable to load movie
+                    </h2>
+
+                    <p>
+                        ${
+                            error.message ||
+                            "Please try again later."
+                        }
+                    </p>
+
+                </div>
+            `;
+    }
 }
 
 
@@ -292,25 +563,44 @@ function setupMovieDetails(movie) {
    VIDEO PLAYER
    ========================================================= */
 
-function setupVideoPlayer(movie) {
+function setupVideoPlayer(
+    movie,
+    serverProgress = null
+) {
 
     const video =
         document.getElementById(
             "stream-player"
         );
 
+
     if (!video) {
         return;
     }
 
 
+    const serverTime =
+        Number(
+            serverProgress
+                ?.progress_seconds || 0
+        );
+
+
+    const localTime =
+        getWatchProgress(
+            movie.id
+        );
+
+
+    const savedTime =
+        serverTime > 0
+            ? serverTime
+            : localTime;
+
+
     /* -----------------------------------------------------
        RESTORE POSITION
        ----------------------------------------------------- */
-
-    const savedTime =
-        getWatchProgress(movie.id);
-
 
     video.addEventListener(
         "loadedmetadata",
@@ -323,15 +613,13 @@ function setupVideoPlayer(movie) {
 
                 video.currentTime =
                     savedTime;
-
             }
-
         }
     );
 
 
     /* -----------------------------------------------------
-       SAVE POSITION
+       SAVE POSITION LOCALLY
        ----------------------------------------------------- */
 
     video.addEventListener(
@@ -346,9 +634,7 @@ function setupVideoPlayer(movie) {
                     movie.id,
                     video.currentTime
                 );
-
             }
-
         }
     );
 
@@ -364,7 +650,6 @@ function setupVideoPlayer(movie) {
             clearWatchProgress(
                 movie.id
             );
-
         }
     );
 

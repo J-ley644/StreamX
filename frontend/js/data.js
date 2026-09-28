@@ -1,112 +1,344 @@
 /* =========================================================
-   STREAMX — DATA & LOCAL STORAGE
+   STREAMX — DATA & API
    ========================================================= */
 
-const movies = [
-    {
-        id: 1,
-        title: "The Last Frontier",
-        year: 2026,
-        duration: "2h 14m",
-        rating: 8.7,
-        genre: "Sci-Fi",
-        genres: ["Sci-Fi", "Adventure", "Drama"],
-        description:
-            "Humanity's final mission begins beyond the edge of known space.",
-        poster:
-            "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=700&q=80",
-        backdrop:
-            "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1800&q=85"
-    },
-
-    {
-        id: 2,
-        title: "Shadow Protocol",
-        year: 2026,
-        duration: "1h 58m",
-        rating: 8.4,
-        genre: "Action",
-        genres: ["Action", "Thriller"],
-        description:
-            "A former intelligence agent is pulled into one final dangerous operation.",
-        poster:
-            "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=700&q=80",
-        backdrop:
-            "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1800&q=85"
-    },
-
-    {
-        id: 3,
-        title: "After Midnight",
-        year: 2025,
-        duration: "1h 47m",
-        rating: 8.1,
-        genre: "Thriller",
-        genres: ["Thriller", "Mystery"],
-        description:
-            "When the city goes silent, a detective discovers something nobody was meant to see.",
-        poster:
-            "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=700&q=80",
-        backdrop:
-            "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1800&q=85"
-    },
-
-    {
-        id: 4,
-        title: "Lost Kingdom",
-        year: 2025,
-        duration: "2h 06m",
-        rating: 8.5,
-        genre: "Adventure",
-        genres: ["Adventure", "Fantasy"],
-        description:
-            "An ancient kingdom awakens and a young explorer must uncover its forgotten secret.",
-        poster:
-            "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=700&q=80",
-        backdrop:
-            "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1800&q=85"
-    },
-
-    {
-        id: 5,
-        title: "The Silent Ocean",
-        year: 2026,
-        duration: "1h 52m",
-        rating: 8.2,
-        genre: "Drama",
-        genres: ["Drama", "Mystery"],
-        description:
-            "A mysterious signal from beneath the ocean changes everything.",
-        poster:
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80",
-        backdrop:
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1800&q=85"
-    },
-
-    {
-        id: 6,
-        title: "Neon City",
-        year: 2026,
-        duration: "2h 02m",
-        rating: 8.0,
-        genre: "Crime",
-        genres: ["Crime", "Action"],
-        description:
-            "In a city ruled by technology and money, one detective refuses to play by the rules.",
-        poster:
-            "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=700&q=80",
-        backdrop:
-            "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1800&q=85"
-    }
-];
+const STREAMX_API_BASE =
+    window.STREAMX_API_BASE ||
+    "http://localhost:5000/api";
 
 
 /* =========================================================
-   DEMO VIDEO
+   MOVIE CATALOGUE
    ========================================================= */
 
-const demoVideoUrl =
-    "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
+let movies = [];
+
+let continueWatching = [];
+
+let featuredMovie = null;
+
+
+/* =========================================================
+   FALLBACK ARTWORK
+   ========================================================= */
+
+const STREAMX_FALLBACK_POSTER =
+    "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=700&q=80";
+
+const STREAMX_FALLBACK_BACKDROP =
+    "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1800&q=85";
+
+
+/* =========================================================
+   AUTHENTICATION
+   ========================================================= */
+
+function getAuthToken() {
+
+    const directToken =
+        localStorage.getItem("streamx_token");
+
+    if (directToken) {
+        return directToken;
+    }
+
+
+    const token =
+        localStorage.getItem("token");
+
+    if (token) {
+        return token;
+    }
+
+
+    try {
+
+        const auth =
+            JSON.parse(
+                localStorage.getItem(
+                    "streamx_auth"
+                ) || "null"
+            );
+
+        return auth?.token || null;
+
+    } catch (error) {
+
+        return null;
+    }
+}
+
+
+/* =========================================================
+   MOVIE NORMALIZATION
+   ========================================================= */
+
+function normalizeMovie(movie) {
+
+    if (!movie) {
+        return null;
+    }
+
+
+    const genres =
+        Array.isArray(movie.genres)
+            ? movie.genres
+                .map(genre => {
+
+                    if (
+                        typeof genre ===
+                        "string"
+                    ) {
+                        return genre;
+                    }
+
+                    return genre?.name || "";
+                })
+                .filter(Boolean)
+            : [];
+
+
+    const primaryGenre =
+        genres[0] ||
+        "Movie";
+
+
+    return {
+
+        /*
+         * IMPORTANT:
+         * Keep the backend UUID as a string.
+         */
+        id:
+            String(movie.id),
+
+        title:
+            movie.title || "Untitled Movie",
+
+        year:
+            movie.release_year ??
+            movie.year ??
+            "",
+
+        duration:
+            movie.duration_seconds
+                ? formatDuration(
+                    movie.duration_seconds
+                )
+                : movie.duration || "",
+
+        duration_seconds:
+            movie.duration_seconds ?? 0,
+
+        rating:
+            movie.rating ?? 0,
+
+        genre:
+            primaryGenre,
+
+        genres,
+
+        description:
+            movie.description || "",
+
+        poster:
+            movie.poster_url ||
+            movie.poster ||
+            STREAMX_FALLBACK_POSTER,
+
+        backdrop:
+            movie.backdrop_url ||
+            movie.backdrop ||
+            STREAMX_FALLBACK_BACKDROP,
+
+        video_status:
+            movie.video_status ||
+            null
+    };
+}
+
+
+/* =========================================================
+   MOVIE CATALOGUE API
+   ========================================================= */
+
+async function loadMovies() {
+
+    const response =
+        await fetch(
+            `${STREAMX_API_BASE}/movies`,
+            {
+                method: "GET",
+
+                headers: {
+                    Accept:
+                        "application/json"
+                }
+            }
+        );
+
+
+    let payload = null;
+
+
+    try {
+
+        payload =
+            await response.json();
+
+    } catch (error) {
+
+        payload = null;
+    }
+
+
+    if (
+        !response.ok ||
+        !payload?.success
+    ) {
+
+        const error =
+            new Error(
+                payload?.message ||
+                "Failed to load movies."
+            );
+
+        error.code =
+            "MOVIES_LOAD_FAILED";
+
+        error.status =
+            response.status;
+
+        throw error;
+    }
+
+
+    const apiMovies =
+        Array.isArray(payload.data)
+            ? payload.data
+            : [];
+
+
+    movies =
+        apiMovies
+            .map(normalizeMovie)
+            .filter(Boolean);
+
+
+    featuredMovie =
+        movies[0] || null;
+
+
+    continueWatching =
+        movies
+            .filter(
+                movie =>
+                    getWatchProgress(
+                        movie.id
+                    ) > 0
+            )
+            .slice(0, 5)
+            .map(movie => ({
+                movie
+            }));
+
+
+    return movies;
+}
+
+
+/* =========================================================
+   PLAYBACK API
+   ========================================================= */
+
+async function getPlaybackData(movieId) {
+
+    const token =
+        getAuthToken();
+
+
+    if (!token) {
+
+        const error =
+            new Error(
+                "AUTH_REQUIRED"
+            );
+
+        error.code =
+            "AUTH_REQUIRED";
+
+        throw error;
+    }
+
+
+    const response =
+        await fetch(
+            `${STREAMX_API_BASE}/playback/movies/${encodeURIComponent(movieId)}`,
+            {
+                method: "GET",
+
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`,
+
+                    Accept:
+                        "application/json"
+                }
+            }
+        );
+
+
+    let payload = null;
+
+
+    try {
+
+        payload =
+            await response.json();
+
+    } catch (error) {
+
+        payload = null;
+    }
+
+
+    if (response.status === 401) {
+
+        const error =
+            new Error(
+                "AUTH_EXPIRED"
+            );
+
+        error.code =
+            "AUTH_EXPIRED";
+
+        throw error;
+    }
+
+
+    if (
+        !response.ok ||
+        !payload?.success
+    ) {
+
+        const error =
+            new Error(
+                payload?.message ||
+                "Failed to load playback data."
+            );
+
+        error.code =
+            "PLAYBACK_FAILED";
+
+        error.status =
+            response.status;
+
+        throw error;
+    }
+
+
+    return payload.data;
+}
 
 
 /* =========================================================
@@ -115,9 +347,23 @@ const demoVideoUrl =
 
 function getMovieById(id) {
 
+    if (
+        id === null ||
+        id === undefined
+    ) {
+        return null;
+    }
+
+
+    const targetId =
+        String(id);
+
+
     return movies.find(
-        movie => movie.id === Number(id)
-    );
+        movie =>
+            String(movie.id) ===
+            targetId
+    ) || null;
 }
 
 
@@ -127,9 +373,24 @@ function getMovieById(id) {
 
 function getMyListIds() {
 
-    return JSON.parse(
-        localStorage.getItem("streamx_my_list") || "[]"
-    );
+    try {
+
+        const ids =
+            JSON.parse(
+                localStorage.getItem(
+                    "streamx_my_list"
+                ) || "[]"
+            );
+
+
+        return Array.isArray(ids)
+            ? ids.map(String)
+            : [];
+
+    } catch (error) {
+
+        return [];
+    }
 }
 
 
@@ -137,36 +398,50 @@ function saveMyListIds(ids) {
 
     localStorage.setItem(
         "streamx_my_list",
-        JSON.stringify(ids)
+        JSON.stringify(
+            ids.map(String)
+        )
     );
 }
 
 
 function isInMyList(movieId) {
 
+    const id =
+        String(movieId);
+
+
     return getMyListIds()
-        .includes(Number(movieId));
+        .includes(id);
 }
 
 
 function toggleMyList(movieId) {
 
-    const id = Number(movieId);
+    const id =
+        String(movieId);
 
-    let ids = getMyListIds();
+
+    let ids =
+        getMyListIds();
+
 
     if (ids.includes(id)) {
 
-        ids = ids.filter(
-            savedId => savedId !== id
-        );
+        ids =
+            ids.filter(
+                savedId =>
+                    savedId !== id
+            );
 
     } else {
 
         ids.push(id);
     }
 
+
     saveMyListIds(ids);
+
 
     return ids.includes(id);
 }
@@ -175,7 +450,10 @@ function toggleMyList(movieId) {
 function getMyListMovies() {
 
     return getMyListIds()
-        .map(id => getMovieById(id))
+        .map(
+            id =>
+                getMovieById(id)
+        )
         .filter(Boolean);
 }
 
@@ -186,9 +464,24 @@ function getMyListMovies() {
 
 function getDownloadIds() {
 
-    return JSON.parse(
-        localStorage.getItem("streamx_downloads") || "[]"
-    );
+    try {
+
+        const ids =
+            JSON.parse(
+                localStorage.getItem(
+                    "streamx_downloads"
+                ) || "[]"
+            );
+
+
+        return Array.isArray(ids)
+            ? ids.map(String)
+            : [];
+
+    } catch (error) {
+
+        return [];
+    }
 }
 
 
@@ -196,36 +489,50 @@ function saveDownloadIds(ids) {
 
     localStorage.setItem(
         "streamx_downloads",
-        JSON.stringify(ids)
+        JSON.stringify(
+            ids.map(String)
+        )
     );
 }
 
 
 function isDownloaded(movieId) {
 
+    const id =
+        String(movieId);
+
+
     return getDownloadIds()
-        .includes(Number(movieId));
+        .includes(id);
 }
 
 
 function toggleDownload(movieId) {
 
-    const id = Number(movieId);
+    const id =
+        String(movieId);
 
-    let ids = getDownloadIds();
+
+    let ids =
+        getDownloadIds();
+
 
     if (ids.includes(id)) {
 
-        ids = ids.filter(
-            downloadId => downloadId !== id
-        );
+        ids =
+            ids.filter(
+                downloadId =>
+                    downloadId !== id
+            );
 
     } else {
 
         ids.push(id);
     }
 
+
     saveDownloadIds(ids);
+
 
     return ids.includes(id);
 }
@@ -234,7 +541,10 @@ function toggleDownload(movieId) {
 function getDownloadedMovies() {
 
     return getDownloadIds()
-        .map(id => getMovieById(id))
+        .map(
+            id =>
+                getMovieById(id)
+        )
         .filter(Boolean);
 }
 
@@ -253,7 +563,10 @@ function getWatchProgress(movieId) {
 }
 
 
-function saveWatchProgress(movieId, seconds) {
+function saveWatchProgress(
+    movieId,
+    seconds
+) {
 
     localStorage.setItem(
         `streamx_progress_${movieId}`,
@@ -269,17 +582,39 @@ function clearWatchProgress(movieId) {
     );
 }
 
-const continueWatching = [
-    {
-        movie: movies[0]
-    },
-    {
-        movie: movies[2]
-    },
-    {
-        movie: movies[4]
+
+/* =========================================================
+   DURATION
+   ========================================================= */
+
+function formatDuration(seconds) {
+
+    const totalSeconds =
+        Math.max(
+            0,
+            Math.floor(
+                Number(seconds) || 0
+            )
+        );
+
+
+    const hours =
+        Math.floor(
+            totalSeconds / 3600
+        );
+
+
+    const minutes =
+        Math.floor(
+            (totalSeconds % 3600) / 60
+        );
+
+
+    if (hours > 0) {
+
+        return `${hours}h ${minutes}m`;
     }
-];
 
 
-const featuredMovie = movies[0];
+    return `${minutes}m`;
+}

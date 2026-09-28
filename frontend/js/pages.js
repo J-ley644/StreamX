@@ -14,11 +14,12 @@ function getMovieFromURL() {
             window.location.search
         );
 
-    const id =
-        Number(params.get("id"));
 
-    return getMovieById(id)
-        || movies[0];
+    const id =
+        params.get("id");
+
+
+    return getMovieById(id);
 }
 
 
@@ -28,8 +29,32 @@ function getMovieFromURL() {
 
 function MovieDetails(movie) {
 
+    if (!movie) {
+
+        return `
+            <section class="page-container">
+
+                <div class="empty-state">
+
+                    <h2>
+                        Movie not found
+                    </h2>
+
+                    <p>
+                        This movie could not be found
+                        in the StreamX catalogue.
+                    </p>
+
+                </div>
+
+            </section>
+        `;
+    }
+
+
     const inList =
         isInMyList(movie.id);
+
 
     const downloaded =
         isDownloaded(movie.id);
@@ -75,21 +100,45 @@ function MovieDetails(movie) {
 
                     <div class="details-meta">
 
-                        <span class="rating">
-                            ★ ${movie.rating}
-                        </span>
+                        ${
+                            movie.rating != null
+                                ? `
+                                    <span class="rating">
+                                        ★ ${movie.rating}
+                                    </span>
+                                `
+                                : ""
+                        }
 
-                        <span>
-                            ${movie.year}
-                        </span>
+                        ${
+                            movie.year
+                                ? `
+                                    <span>
+                                        ${movie.year}
+                                    </span>
+                                `
+                                : ""
+                        }
 
-                        <span>
-                            ${movie.duration}
-                        </span>
+                        ${
+                            movie.duration
+                                ? `
+                                    <span>
+                                        ${movie.duration}
+                                    </span>
+                                `
+                                : ""
+                        }
 
-                        <span>
-                            ${movie.genre}
-                        </span>
+                        ${
+                            movie.genre
+                                ? `
+                                    <span>
+                                        ${movie.genre}
+                                    </span>
+                                `
+                                : ""
+                        }
 
                     </div>
 
@@ -126,9 +175,10 @@ function MovieDetails(movie) {
                             class="btn btn-secondary"
                             id="list-button"
                         >
-                            ${inList
-                                ? "✓ In My List"
-                                : "＋ My List"
+                            ${
+                                inList
+                                    ? "✓ In My List"
+                                    : "+ My List"
                             }
                         </button>
 
@@ -137,9 +187,10 @@ function MovieDetails(movie) {
                             class="download-button"
                             id="download-button"
                         >
-                            ${downloaded
-                                ? "✓ Downloaded"
-                                : "↓ Download"
+                            ${
+                                downloaded
+                                    ? "✓ Downloaded"
+                                    : "↓ Download"
                             }
                         </button>
 
@@ -170,7 +221,6 @@ function SearchResults(query) {
             "Popular Movies",
             movies
         );
-
     }
 
 
@@ -195,7 +245,6 @@ function SearchResults(query) {
             return searchable.includes(
                 normalized
             );
-
         });
 
 
@@ -233,7 +282,103 @@ function SearchResults(query) {
    WATCH PLAYER
    ========================================================= */
 
-function WatchPlayer(movie) {
+function WatchPlayer(
+    movie,
+    playbackData = null
+) {
+
+    const playbackMovie =
+        playbackData?.movie ||
+        movie;
+
+
+    const videoAssets =
+        playbackData?.video_assets ||
+        [];
+
+
+    const subtitles =
+        playbackData?.subtitles ||
+        [];
+
+
+    const progress =
+        Number(
+            playbackData?.progress?.progress_seconds ||
+            0
+        );
+
+
+    const selectedAsset =
+        videoAssets[0] ||
+        null;
+
+
+    const subtitleTracks =
+        subtitles
+            .map(
+                subtitle => `
+                    <track
+                        kind="subtitles"
+                        src="${subtitle.file_url}"
+                        srclang="${subtitle.language_code}"
+                        label="${subtitle.language_name}"
+                    >
+                `
+            )
+            .join("");
+
+
+    if (!selectedAsset) {
+
+        return `
+            <section class="watch-page">
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        ▶
+                    </div>
+
+                    <h2>
+                        Video unavailable
+                    </h2>
+
+                    <p>
+                        This movie does not have a
+                        ready video stream yet.
+                    </p>
+
+                </div>
+
+
+                <div class="watch-info">
+
+                    <h1>
+                        ${playbackMovie.title}
+                    </h1>
+
+                    <p>
+                        ${playbackMovie.description || ""}
+                    </p>
+
+                </div>
+
+            </section>
+        `;
+    }
+
+
+    const format =
+        selectedAsset.format ||
+        "mp4";
+
+
+    const mimeType =
+        format === "mp4"
+            ? "video/mp4"
+            : `video/${format}`;
+
 
     return `
         <section class="watch-page">
@@ -244,14 +389,20 @@ function WatchPlayer(movie) {
                     id="stream-player"
                     controls
                     playsinline
-                    poster="${movie.backdrop}"
+                    poster="${
+                        playbackMovie.backdrop_url ||
+                        playbackMovie.backdrop ||
+                        STREAMX_FALLBACK_BACKDROP
+                    }"
                     preload="metadata"
                 >
 
                     <source
-                        src="${demoVideoUrl}"
-                        type="video/mp4"
+                        src="${selectedAsset.stream_url}"
+                        type="${mimeType}"
                     >
+
+                    ${subtitleTracks}
 
                     Your browser does not support
                     HTML5 video.
@@ -264,32 +415,76 @@ function WatchPlayer(movie) {
             <div class="watch-info">
 
                 <h1>
-                    ${movie.title}
+                    ${playbackMovie.title}
                 </h1>
+
 
                 <div class="details-meta">
 
-                    <span class="rating">
-                        ★ ${movie.rating}
-                    </span>
+                    ${
+                        playbackMovie.rating != null
+                            ? `
+                                <span class="rating">
+                                    ★ ${playbackMovie.rating}
+                                </span>
+                            `
+                            : ""
+                    }
 
-                    <span>
-                        ${movie.year}
-                    </span>
 
-                    <span>
-                        ${movie.duration}
-                    </span>
+                    ${
+                        playbackMovie.release_year ||
+                        playbackMovie.year
+                            ? `
+                                <span>
+                                    ${
+                                        playbackMovie.release_year ||
+                                        playbackMovie.year
+                                    }
+                                </span>
+                            `
+                            : ""
+                    }
 
-                    <span>
-                        ${movie.genre}
-                    </span>
+
+                    ${
+                        playbackMovie.duration_seconds
+                            ? `
+                                <span>
+                                    ${
+                                        formatDuration(
+                                            playbackMovie.duration_seconds
+                                        )
+                                    }
+                                </span>
+                            `
+                            : playbackMovie.duration
+                                ? `
+                                    <span>
+                                        ${playbackMovie.duration}
+                                    </span>
+                                `
+                                : ""
+                    }
 
                 </div>
 
+
                 <p>
-                    ${movie.description}
+                    ${playbackMovie.description || ""}
                 </p>
+
+
+                ${
+                    progress > 0
+                        ? `
+                            <p class="watch-resume">
+                                Resume position:
+                                ${formatDuration(progress)}
+                            </p>
+                        `
+                        : ""
+                }
 
             </div>
 
@@ -326,6 +521,7 @@ function MyListPage() {
                 </p>
 
             </div>
+
 
             ${MovieRow(
                 "Saved Movies",
@@ -416,6 +612,7 @@ function DownloadsPage() {
                 </p>
 
             </div>
+
 
             ${MovieRow(
                 "Downloaded Movies",
