@@ -1,3 +1,4 @@
+
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -31,7 +32,8 @@ function createJwt(user) {
         {
             sub: user.id,
             email: user.email,
-            displayName: user.display_name
+            displayName: user.display_name,
+            role: user.role || "user"
         },
         config.jwtSecret,
         {
@@ -48,6 +50,7 @@ function sanitizeUser(user) {
         avatar_url: user.avatar_url,
         auth_provider: user.auth_provider,
         email_verified: user.email_verified,
+        role: user.role || "user",
         created_at: user.created_at,
         updated_at: user.updated_at
     };
@@ -67,6 +70,7 @@ async function findUserByEmail(email) {
             email_verified,
             email_verification_token,
             email_verification_expires_at,
+            role,
             created_at,
             updated_at
         FROM users
@@ -91,6 +95,7 @@ async function findUserById(id) {
             auth_provider,
             google_id,
             email_verified,
+            role,
             created_at,
             updated_at
         FROM users
@@ -151,6 +156,7 @@ async function registerUser({
             avatar_url,
             auth_provider,
             email_verified,
+            role,
             created_at,
             updated_at;
         `,
@@ -226,6 +232,7 @@ async function createNewVerificationToken(email) {
             avatar_url,
             auth_provider,
             email_verified,
+            role,
             created_at,
             updated_at;
         `,
@@ -276,6 +283,7 @@ async function verifyEmail(rawToken) {
             avatar_url,
             auth_provider,
             email_verified,
+            role,
             created_at,
             updated_at;
         `,
@@ -427,6 +435,7 @@ async function authenticateGoogle(idToken) {
                 auth_provider,
                 google_id,
                 email_verified,
+                role,
                 created_at,
                 updated_at;
             `,
@@ -465,6 +474,7 @@ async function authenticateGoogle(idToken) {
                 auth_provider,
                 google_id,
                 email_verified,
+                role,
                 created_at,
                 updated_at;
             `,
@@ -494,3 +504,4 @@ module.exports = {
     findUserById,
     sanitizeUser
 };
+

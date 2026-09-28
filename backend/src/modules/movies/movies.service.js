@@ -1,11 +1,19 @@
 const { pool } = require("../../database/connection");
 
-async function getMovies({ search, genre, year, limit = 20, offset = 0 }) {
+
+async function getMovies({
+    search,
+    genre,
+    year,
+    limit = 20,
+    offset = 0
+}) {
     const values = [];
     const conditions = [];
 
     if (search) {
         values.push(`%${search}%`);
+
         conditions.push(`
             (
                 m.title ILIKE $${values.length}
@@ -16,11 +24,15 @@ async function getMovies({ search, genre, year, limit = 20, offset = 0 }) {
 
     if (year) {
         values.push(Number(year));
-        conditions.push(`m.release_year = $${values.length}`);
+
+        conditions.push(
+            `m.release_year = $${values.length}`
+        );
     }
 
     if (genre) {
         values.push(genre);
+
         conditions.push(`
             EXISTS (
                 SELECT 1
@@ -84,7 +96,10 @@ async function getMovies({ search, genre, year, limit = 20, offset = 0 }) {
         OFFSET $${offsetIndex};
     `;
 
-    const result = await pool.query(query, values);
+    const result = await pool.query(
+        query,
+        values
+    );
 
     return result.rows;
 }
@@ -126,7 +141,10 @@ async function getMovieById(id) {
         GROUP BY m.id;
     `;
 
-    const result = await pool.query(query, [id]);
+    const result = await pool.query(
+        query,
+        [id]
+    );
 
     return result.rows[0] || null;
 }
@@ -170,9 +188,61 @@ async function createMovie(movie) {
         video_status || "pending"
     ];
 
-    const result = await pool.query(query, values);
+    const result = await pool.query(
+        query,
+        values
+    );
 
     return result.rows[0];
+}
+
+
+async function updateMovie(id, movie) {
+    const {
+        title,
+        description,
+        release_year,
+        duration_seconds,
+        rating,
+        poster_url,
+        backdrop_url,
+        video_status
+    } = movie;
+
+    const query = `
+        UPDATE movies
+        SET
+            title = $1,
+            description = $2,
+            release_year = $3,
+            duration_seconds = $4,
+            rating = $5,
+            poster_url = $6,
+            backdrop_url = $7,
+            video_status = $8,
+            updated_at = NOW()
+        WHERE id = $9
+        RETURNING *;
+    `;
+
+    const values = [
+        title,
+        description || null,
+        release_year || null,
+        duration_seconds || null,
+        rating || null,
+        poster_url || null,
+        backdrop_url || null,
+        video_status || "pending",
+        id
+    ];
+
+    const result = await pool.query(
+        query,
+        values
+    );
+
+    return result.rows[0] || null;
 }
 
 
@@ -188,6 +258,7 @@ async function deleteMovie(id) {
 
     return result.rows[0] || null;
 }
+
 
 async function getMovieGenres(movieId) {
     const result = await pool.query(
@@ -207,10 +278,14 @@ async function getMovieGenres(movieId) {
     return result.rows;
 }
 
+
 async function addMovieGenre(movieId, genreId) {
     const result = await pool.query(
         `
-        INSERT INTO movie_genres (movie_id, genre_id)
+        INSERT INTO movie_genres (
+            movie_id,
+            genre_id
+        )
         VALUES ($1, $2)
         ON CONFLICT (movie_id, genre_id)
         DO NOTHING
@@ -221,6 +296,7 @@ async function addMovieGenre(movieId, genreId) {
 
     return result.rows[0] || null;
 }
+
 
 async function removeMovieGenre(movieId, genreId) {
     const result = await pool.query(
@@ -241,9 +317,9 @@ module.exports = {
     getMovies,
     getMovieById,
     createMovie,
+    updateMovie,
     deleteMovie,
     getMovieGenres,
     addMovieGenre,
     removeMovieGenre
 };
-

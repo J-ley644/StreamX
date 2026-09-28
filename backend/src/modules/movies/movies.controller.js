@@ -11,13 +11,14 @@ async function getMovies(req, res) {
             offset = 0
         } = req.query;
 
-        const movies = await moviesService.getMovies({
-            search,
-            genre,
-            year,
-            limit,
-            offset
-        });
+        const movies =
+            await moviesService.getMovies({
+                search,
+                genre,
+                year,
+                limit,
+                offset
+            });
 
         res.json({
             success: true,
@@ -25,7 +26,10 @@ async function getMovies(req, res) {
         });
 
     } catch (error) {
-        console.error("Get movies error:", error);
+        console.error(
+            "Get movies error:",
+            error
+        );
 
         res.status(500).json({
             success: false,
@@ -37,9 +41,10 @@ async function getMovies(req, res) {
 
 async function getMovieById(req, res) {
     try {
-        const movie = await moviesService.getMovieById(
-            req.params.id
-        );
+        const movie =
+            await moviesService.getMovieById(
+                req.params.id
+            );
 
         if (!movie) {
             return res.status(404).json({
@@ -54,7 +59,10 @@ async function getMovieById(req, res) {
         });
 
     } catch (error) {
-        console.error("Get movie error:", error);
+        console.error(
+            "Get movie error:",
+            error
+        );
 
         res.status(500).json({
             success: false,
@@ -66,9 +74,35 @@ async function getMovieById(req, res) {
 
 async function createMovie(req, res) {
     try {
-        const movie = await moviesService.createMovie(
-            req.body
-        );
+        const {
+            title,
+            description,
+            release_year,
+            duration_seconds,
+            rating,
+            poster_url,
+            backdrop_url,
+            video_status
+        } = req.body;
+
+        if (!title || !title.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Movie title is required"
+            });
+        }
+
+        const movie =
+            await moviesService.createMovie({
+                title: title.trim(),
+                description,
+                release_year,
+                duration_seconds,
+                rating,
+                poster_url,
+                backdrop_url,
+                video_status
+            });
 
         res.status(201).json({
             success: true,
@@ -76,7 +110,10 @@ async function createMovie(req, res) {
         });
 
     } catch (error) {
-        console.error("Create movie error:", error);
+        console.error(
+            "Create movie error:",
+            error
+        );
 
         res.status(500).json({
             success: false,
@@ -86,11 +123,73 @@ async function createMovie(req, res) {
 }
 
 
+async function updateMovie(req, res) {
+    try {
+        const {
+            title,
+            description,
+            release_year,
+            duration_seconds,
+            rating,
+            poster_url,
+            backdrop_url,
+            video_status
+        } = req.body;
+
+        if (!title || !title.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Movie title is required"
+            });
+        }
+
+        const movie =
+            await moviesService.updateMovie(
+                req.params.id,
+                {
+                    title: title.trim(),
+                    description,
+                    release_year,
+                    duration_seconds,
+                    rating,
+                    poster_url,
+                    backdrop_url,
+                    video_status
+                }
+            );
+
+        if (!movie) {
+            return res.status(404).json({
+                success: false,
+                message: "Movie not found"
+            });
+        }
+
+        res.json({
+            success: true,
+            data: movie
+        });
+
+    } catch (error) {
+        console.error(
+            "Update movie error:",
+            error
+        );
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to update movie"
+        });
+    }
+}
+
+
 async function deleteMovie(req, res) {
     try {
-        const movie = await moviesService.deleteMovie(
-            req.params.id
-        );
+        const movie =
+            await moviesService.deleteMovie(
+                req.params.id
+            );
 
         if (!movie) {
             return res.status(404).json({
@@ -105,7 +204,10 @@ async function deleteMovie(req, res) {
         });
 
     } catch (error) {
-        console.error("Delete movie error:", error);
+        console.error(
+            "Delete movie error:",
+            error
+        );
 
         res.status(500).json({
             success: false,
@@ -114,11 +216,13 @@ async function deleteMovie(req, res) {
     }
 }
 
+
 async function getMovieGenres(req, res) {
     try {
-        const genres = await moviesService.getMovieGenres(
-            req.params.id
-        );
+        const genres =
+            await moviesService.getMovieGenres(
+                req.params.id
+            );
 
         res.json({
             success: true,
@@ -126,7 +230,10 @@ async function getMovieGenres(req, res) {
         });
 
     } catch (error) {
-        console.error("Get movie genres error:", error);
+        console.error(
+            "Get movie genres error:",
+            error
+        );
 
         res.status(500).json({
             success: false,
@@ -135,19 +242,25 @@ async function getMovieGenres(req, res) {
     }
 }
 
+
 async function addMovieGenre(req, res) {
     try {
-        const { id, genreId } = req.params;
-
-        const relationship = await moviesService.addMovieGenre(
+        const {
             id,
             genreId
-        );
+        } = req.params;
+
+        const relationship =
+            await moviesService.addMovieGenre(
+                id,
+                genreId
+            );
 
         if (!relationship) {
             return res.status(409).json({
                 success: false,
-                message: "Movie genre relationship already exists"
+                message:
+                    "Movie genre relationship already exists"
             });
         }
 
@@ -157,49 +270,65 @@ async function addMovieGenre(req, res) {
         });
 
     } catch (error) {
-        console.error("Add movie genre error:", error);
+        console.error(
+            "Add movie genre error:",
+            error
+        );
 
         if (error.code === "23503") {
             return res.status(404).json({
                 success: false,
-                message: "Movie or genre not found"
+                message:
+                    "Movie or genre not found"
             });
         }
 
         res.status(500).json({
             success: false,
-            message: "Failed to add movie genre"
+            message:
+                "Failed to add movie genre"
         });
     }
 }
 
+
 async function removeMovieGenre(req, res) {
     try {
-        const { id, genreId } = req.params;
-
-        const relationship = await moviesService.removeMovieGenre(
+        const {
             id,
             genreId
-        );
+        } = req.params;
+
+        const relationship =
+            await moviesService.removeMovieGenre(
+                id,
+                genreId
+            );
 
         if (!relationship) {
             return res.status(404).json({
                 success: false,
-                message: "Movie genre relationship not found"
+                message:
+                    "Movie genre relationship not found"
             });
         }
 
         res.json({
             success: true,
-            message: "Movie genre removed successfully"
+            message:
+                "Movie genre removed successfully"
         });
 
     } catch (error) {
-        console.error("Remove movie genre error:", error);
+        console.error(
+            "Remove movie genre error:",
+            error
+        );
 
         res.status(500).json({
             success: false,
-            message: "Failed to remove movie genre"
+            message:
+                "Failed to remove movie genre"
         });
     }
 }
@@ -209,6 +338,7 @@ module.exports = {
     getMovies,
     getMovieById,
     createMovie,
+    updateMovie,
     deleteMovie,
     getMovieGenres,
     addMovieGenre,

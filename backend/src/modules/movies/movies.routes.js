@@ -2,20 +2,77 @@ const express = require("express");
 
 const controller = require("./movies.controller");
 
+const {
+    requireAuth,
+    requireAdmin
+} = require("../../middleware/auth.middleware");
+
 const router = express.Router();
 
-router.get("/", controller.getMovies);
 
-router.get("/:id", controller.getMovieById);
+/*
+ * PUBLIC MOVIE ROUTES
+ */
 
-router.post("/", controller.createMovie);
+router.get(
+    "/",
+    controller.getMovies
+);
 
-router.delete("/:id", controller.deleteMovie);
+router.get(
+    "/:id",
+    controller.getMovieById
+);
 
-router.get("/:id/genres", controller.getMovieGenres);
 
-router.post("/:id/genres/:genreId", controller.addMovieGenre);
+/*
+ * ADMIN MOVIE MANAGEMENT
+ */
 
-router.delete("/:id/genres/:genreId", controller.removeMovieGenre);
+router.post(
+    "/",
+    requireAuth,
+    requireAdmin,
+    controller.createMovie
+);
+
+router.patch(
+    "/:id",
+    requireAuth,
+    requireAdmin,
+    controller.updateMovie
+);
+
+router.delete(
+    "/:id",
+    requireAuth,
+    requireAdmin,
+    controller.deleteMovie
+);
+
+
+/*
+ * MOVIE GENRES
+ */
+
+router.get(
+    "/:id/genres",
+    controller.getMovieGenres
+);
+
+router.post(
+    "/:id/genres/:genreId",
+    requireAuth,
+    requireAdmin,
+    controller.addMovieGenre
+);
+
+router.delete(
+    "/:id/genres/:genreId",
+    requireAuth,
+    requireAdmin,
+    controller.removeMovieGenre
+);
+
 
 module.exports = router;
